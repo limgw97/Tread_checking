@@ -6,6 +6,9 @@ import numpy as np
 import tensorflow as tf
 import io
 import traceback
+import os
+
+API_BASE_URL = os.getenv("API_BASE_URL", "http://127.0.0.1:8000")  # 기본값 설정
 
 app = FastAPI()
 
