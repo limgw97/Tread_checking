@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tire tread checking system</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            color: #333;
+        }
+        .header {
+            background-color: #f7c943;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+        }
+        .header .logo {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+        .navbar {
+            display: flex;
+            gap: 20px;
+        }
+        .navbar a {
+            color: #333;
+            text-decoration: none;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            height: 100%;
+            padding: 0 10px;
+        }
+        .main-content {
+            background: 
+                linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)),
+                url('./page_data/image/tire_background.png') no-repeat center center/cover;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #000;
+            text-align: center;
+            padding: 0 20px;
+        }
+        .main-content h1 {
+            font-size: 36px;
+            margin: 0;
+        }
+        .main-content h2 {
+            font-size: 24px;
+            margin: 10px 0 0;
+        }
+        .arrow {
+            margin-top: 20px;
+            font-size: 30px;
+            color: #000;
+        }
+        #upload-form {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        #file-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        #file {
+            opacity: 0;
+            position: absolute;
+            width: 1px;
+            height: 1px;
+        }
+        #custom-file-label,
+        #upload-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #f7c943;
+            color: #333;
+            border: 1px solid #ccc;
+            cursor: pointer;
+            margin-top: 10px;
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        #custom-file-label:hover,
+        #upload-button:hover {
+            background-color: #e5b837;
+        }
+        #file-label {
+            margin-top: 5px;
+            font-size: 14px;
+            color: #000;
+        }
+        #response {
+            margin-top: 20px;
+            color: #333;
+        }
+        #preview-container {
+            margin-top: 10px;
+            width: 400px; /* 확대된 이미지 크기 */
+            height: 400px; /* 확대된 이미지 크기 */
+            overflow: hidden;
+            border: 1px solid #ccc;
+            background-color: #fff; /* 배경을 흰색으로 설정 */
+        }
+        #preview {
+            width: 100%; /* 미리보기 이미지를 container 크기에 맞춤 */
+            height: auto;
+            display: none;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">Tire tread checking system</div>
+        <nav class="navbar">
+            <a href="#s-pace">측정</a>
+            <a href="#about">소개</a>
+            <a href="#projects">프로젝트</a>
+            <a href="#contact">문의</a>
+        </nav>
+    </header>
+    <section class="main-content">
+        <h1>당신의 타이어 트레드의 상태는?</h1>
+        <h2>지금 바로 측정해보세요</h2>
+        <div class="arrow">▼</div>
+        
+        <!-- 이미지 업로드 폼 -->
+        <form id="upload-form" enctype="multipart/form-data">
+            <div id="file-container">
+                <label id="custom-file-label" for="file">이미지 파일 선택</label>
+                <input type="file" id="file" name="file" accept="image/*" required>
+                <div id="preview-container">
+                    <img id="preview" src="#" alt="이미지 미리보기" style="display: none;">
+                </div>
+            </div>
+            <button type="button" id="upload-button">예측 수행</button>
+        </form>
+
+        <!-- 결과 출력 -->
+        <div id="response"></div>
+    </section>
+
+    <script>
+        $(document).ready(function() {
+            // 파일 선택 시 이미지 미리보기 표시
+            $('#file').on('change', function() {
+                const file = this.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        $('#preview').attr('src', e.target.result).show();
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    $('#preview').hide();
+                }
+            });
+
+            $('#upload-button').on('click', function() {
+                const fileInput = $('#file')[0].files[0];
+
+                if (!fileInput) {
+                    alert("이미지를 선택하세요.");
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append("file", fileInput);
+
+                $.ajax({
+                    url: "http://127.0.0.1:8000/predict/",
+                    type: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(result) {
+                        $('#response').html(`<p>${result.message}</p>`);
+                    },
+                    error: function(xhr) {
+                        const errorDetail = xhr.responseJSON && xhr.responseJSON.detail ? xhr.responseJSON.detail : "알 수 없는 오류 발생";
+                        $('#response').html(`<p>오류: ${errorDetail}</p>`);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+
+
+
