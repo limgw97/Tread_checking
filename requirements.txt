@@ -6,3 +6,4 @@ numpy                    # 이미지 배열 및 데이터 처리를 위한 NumPy
 sqlalchemy               # SQLAlchemy ORM
 asyncpg                  # 비동기 PostgreSQL 드라이버
 python-multipart
+jinja2
