@@ -1,5 +1,5 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 from PIL import Image
 import numpy as np
@@ -7,6 +7,7 @@ import tensorflow as tf
 import io
 import traceback
 import os
+from fastapi.templating import Jinja2Templates
 
 API_BASE_URL = os.getenv("API_BASE_URL", "http://127.0.0.1:8000")  # 기본값 설정
 
@@ -38,6 +39,12 @@ def crop_tread(image):
     right = width * 0.75
     bottom = height * 0.6
     return image.crop((left, top, right, bottom))
+
+templates = Jinja2Templates(directory="templates")
+
+@app.get("/", response_class=HTMLResponse)
+async def root(request: Request):
+    return templates.TemplateResponse("example.html", {"request": request})
 
 @app.post("/predict/")
 async def predict_image(file: UploadFile = File(...)):
