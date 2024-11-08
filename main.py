@@ -44,20 +44,29 @@ def crop_tread(image):
 
 templates = Jinja2Templates(directory="templates")
 
+# 현재 파일의 경로를 기준으로 templates 폴더의 경로를 가져옵니다.
+current_dir = os.path.dirname(os.path.abspath(__file__))
+templates_dir = os.path.join(current_dir, "templates")
+
 @app.get("/", response_class=HTMLResponse)
 async def root(request: Request):
     user_agent = request.headers.get('user-agent', '')
-    # 모바일 기기 여부 확인 (정규 표현식 사용)
-    if "Mobi" in user_agent or "Android" in user_agent:
-        # 모바일용 HTML 파일 반환
-        with open("mobile.html", "r", encoding="utf-8") as file:
+    try:
+        # 모바일 기기 여부 확인
+        if "Mobi" in user_agent or "Android" in user_agent:
+            # 모바일용 HTML 파일 반환
+            file_path = os.path.join(templates_dir, "mobile.html")
+        else:
+            # 데스크톱용 HTML 파일 반환
+            file_path = os.path.join(templates_dir, "example.html")
+        
+        # 파일 읽기
+        with open(file_path, "r", encoding="utf-8") as file:
             content = file.read()
-    else:
-        # 데스크톱용 HTML 파일 반환
-        with open("example.html", "r", encoding="utf-8") as file:
-            content = file.read()
-    
-    return HTMLResponse(content=content)
+
+        return HTMLResponse(content=content)
+    except FileNotFoundError:
+        return HTMLResponse(content="File not found.", status_code=404)
 
 
 @app.get("/", response_class=HTMLResponse)
