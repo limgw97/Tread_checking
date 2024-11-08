@@ -13,6 +13,8 @@ API_BASE_URL = os.getenv("API_BASE_URL", "http://127.0.0.1:8000")  # 기본값 �
 
 app = FastAPI()
 
+
+
 # Allow CORS from all origins for testing; restrict in production as needed
 app.add_middleware(
     CORSMiddleware,
@@ -41,6 +43,22 @@ def crop_tread(image):
     return image.crop((left, top, right, bottom))
 
 templates = Jinja2Templates(directory="templates")
+
+@app.get("/", response_class=HTMLResponse)
+async def root(request: Request):
+    user_agent = request.headers.get('user-agent', '')
+    # 모바일 기기 여부 확인 (정규 표현식 사용)
+    if "Mobi" in user_agent or "Android" in user_agent:
+        # 모바일용 HTML 파일 반환
+        with open("mobile.html", "r", encoding="utf-8") as file:
+            content = file.read()
+    else:
+        # 데스크톱용 HTML 파일 반환
+        with open("example.html", "r", encoding="utf-8") as file:
+            content = file.read()
+    
+    return HTMLResponse(content=content)
+
 
 @app.get("/", response_class=HTMLResponse)
 async def root(request: Request):
