@@ -5,125 +5,243 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tire tread checking system</title>
     <style>
+        :root {
+            --primary-color: #3b82f6;
+            --secondary-color: #1d4ed8;
+            --background-color: #f8fafc;
+            --text-color: #1e293b;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             margin: 0;
-            font-family: Arial, sans-serif;
-            color: #333;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+            color: var(--text-color);
+            background-color: var(--background-color);
         }
+
         .header {
-            background-color: #f7c943;
-            height: 50px;
+            background-color: white;
+            height: 70px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 20px;
+            padding: 0 2rem;
+            box-shadow: var(--shadow);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
         }
+
         .header .logo {
-            font-size: 20px;
-            font-weight: bold;
-            color: #333;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
         }
+
         .navbar {
             display: flex;
-            gap: 20px;
+            gap: 2rem;
         }
+
         .navbar a {
-            color: #333;
+            color: var(--text-color);
             text-decoration: none;
-            font-size: 16px;
-            display: flex;
-            align-items: center;
-            height: 100%;
-            padding: 0 10px;
+            font-size: 1rem;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            transition: all 0.2s ease;
         }
+
+        .navbar a:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
         .main-content {
-            background: 
-                linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)),
-                url('../tire_background.png') no-repeat center center/cover;
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            color: #000;
-            text-align: center;
-            padding: 0 20px;
+            padding: 6rem 2rem 2rem;
+            background: linear-gradient(
+                rgba(255, 255, 255, 0.9),
+                rgba(255, 255, 255, 0.9)
+            ),
+            url('./page_data/image/tire_background.png') no-repeat center center/cover;
         }
+
         .main-content h1 {
-            font-size: 36px;
-            margin: 0;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-align: center;
         }
+
         .main-content h2 {
-            font-size: 24px;
-            margin: 10px 0 0;
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: #64748b;
+            margin-bottom: 3rem;
+            text-align: center;
         }
-        .arrow {
-            margin-top: 20px;
-            font-size: 30px;
-            color: #000;
-        }
+
         #upload-form {
-            margin-top: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            background-color: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: var(--shadow);
+            width: 100%;
+            max-width: 500px;
         }
+
         #file-container {
             display: flex;
             flex-direction: column;
             align-items: center;
+            gap: 1rem;
         }
+
         #file {
-            opacity: 0;
-            position: absolute;
-            width: 1px;
-            height: 1px;
-        }
-        #custom-file-label,
-        #upload-button {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #f7c943;
-            color: #333;
-            border: 1px solid #ccc;
-            cursor: pointer;
-            margin-top: 10px;
-            text-align: center;
-            font-size: 16px;
-            font-weight: bold;
-        }
-        #custom-file-label:hover,
-        #upload-button:hover {
-            background-color: #e5b837;
-        }
-        #file-label {
-            margin-top: 5px;
-            font-size: 14px;
-            color: #000;
-        }
-        #response {
-            margin-top: 20px;
-            color: #333;
-        }
-        #preview-container {
-            margin-top: 10px;
-            width: 400px; /* 확대된 이미지 크기 */
-            height: 400px; /* 확대된 이미지 크기 */
-            overflow: hidden;
-            border: 1px solid #ccc;
-            background-color: #fff; /* 배경을 흰색으로 설정 */
-        }
-        #preview {
-            width: 100%; /* 미리보기 이미지를 container 크기에 맞춤 */
-            height: auto;
             display: none;
+        }
+
+        #custom-file-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 1rem;
+            background-color: #f1f5f9;
+            border: 2px dashed #cbd5e1;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        #custom-file-label:hover {
+            background-color: #e2e8f0;
+            border-color: var(--primary-color);
+        }
+
+        #preview-container {
+            width: 100%;
+            max-width: 300px;
+            aspect-ratio: 1;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            background-color: #f1f5f9;
+        }
+
+        #preview {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        #upload-button {
+            width: 100%;
+            padding: 1rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 1.5rem;
+        }
+
+        #upload-button:hover {
+            background-color: var(--secondary-color);
+        }
+
+        #upload-button:disabled {
+            background-color: #94a3b8;
+            cursor: not-allowed;
+        }
+
+        #response {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            background-color: #f1f5f9;
+            width: 100%;
+            text-align: center;
+        }
+
+        #response p {
+            font-size: 1.25rem;
+            font-weight: 500;
+            line-height: 1.5;
+        }
+
+        #response .success {
+            color: #10b981;
+            font-size: 1.35rem;
+            font-weight: 600;
+        }
+
+        #response .error {
+            color: #ef4444;
+            font-size: 1.25rem;
+        }
+
+        #response .loading {
+            color: var(--primary-color);
+            font-size: 1.25rem;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 0 1rem;
+            }
+
+            .navbar {
+                gap: 1rem;
+            }
+
+            .navbar a {
+                padding: 0.25rem 0.5rem;
+                font-size: 0.875rem;
+            }
+
+            .main-content {
+                padding: 5rem 1rem 1rem;
+            }
+
+            .main-content h1 {
+                font-size: 2rem;
+            }
+
+            .main-content h2 {
+                font-size: 1.25rem;
+            }
+
+            #response p {
+                font-size: 1.125rem;
+            }
+            
+            #response .success {
+                font-size: 1.25rem;
+            }
         }
     </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
     <header class="header">
-        <div class="logo">Tire tread checking system</div>
+        <div class="logo">Tire Check</div>
         <nav class="navbar">
             <a href="#measure">측정</a>
             <a href="#about">소개</a>
@@ -131,30 +249,27 @@
             <a href="#contact">문의</a>
         </nav>
     </header>
-    <section class="main-content">
-        <h1>당신의 타이어 트레드의 상태는?</h1>
-        <h2>지금 바로 측정해보세요</h2>
-        <div class="arrow">▼</div>
+    <main class="main-content">
+        <h1>타이어 트레드 상태 체크</h1>
+        <h2>AI가 당신의 타이어 상태를 분석해드립니다</h2>
         
-        <!-- 이미지 업로드 폼 -->
         <form id="upload-form" enctype="multipart/form-data">
             <div id="file-container">
-                <label id="custom-file-label" for="file">이미지 파일 선택</label>
+                <label id="custom-file-label" for="file">
+                    클릭하여 이미지 업로드
+                </label>
                 <input type="file" id="file" name="file" accept="image/*" required>
                 <div id="preview-container">
                     <img id="preview" src="#" alt="이미지 미리보기" style="display: none;">
                 </div>
             </div>
-            <button type="button" id="upload-button">타이어 진단</button>
+            <button type="button" id="upload-button">분석 시작하기</button>
+            <div id="response"></div>
         </form>
-
-        <!-- 결과 출력 -->
-        <div id="response"></div>
-    </section>
+    </main>
 
     <script>
         $(document).ready(function() {
-            // 파일 선택 시 이미지 미리보기 표시
             $('#file').on('change', function() {
                 const file = this.files[0];
                 if (file) {
@@ -163,8 +278,10 @@
                         $('#preview').attr('src', e.target.result).show();
                     };
                     reader.readAsDataURL(file);
+                    $('#custom-file-label').text('이미지 변경하기');
                 } else {
                     $('#preview').hide();
+                    $('#custom-file-label').text('클릭하여 이미지 업로드');
                 }
             });
 
@@ -172,25 +289,42 @@
                 const fileInput = $('#file')[0].files[0];
 
                 if (!fileInput) {
-                    alert("이미지를 선택하세요.");
+                    $('#response').html(`
+                        <p class="error">이미지를 선택해주세요.</p>
+                    `);
                     return;
                 }
+
+                // 로딩 상태 표시
+                $('#upload-button').prop('disabled', true).text('분석 중...');
+                $('#response').html(`
+                    <p class="loading">이미지를 분석하고 있습니다...</p>
+                `);
 
                 const formData = new FormData();
                 formData.append("file", fileInput);
 
                 $.ajax({
-                    url: "https://tire-tread-checking-service.onrender.com/predict/",
+                    url: "http://127.0.0.1:8000/predict/",
                     type: "POST",
                     data: formData,
                     processData: false,
                     contentType: false,
                     success: function(result) {
-                        $('#response').html(`<p>${result.message}</p>`);
+                        $('#response').html(`
+                            <p class="success">${result.message}</p>
+                        `);
                     },
                     error: function(xhr) {
-                        const errorDetail = xhr.responseJSON && xhr.responseJSON.detail ? xhr.responseJSON.detail : "알 수 없는 오류 발생";
-                        $('#response').html(`<p>오류: ${errorDetail}</p>`);
+                        const errorDetail = xhr.responseJSON && xhr.responseJSON.detail 
+                            ? xhr.responseJSON.detail 
+                            : "알 수 없는 오류가 발생했습니다.";
+                        $('#response').html(`
+                            <p class="error">오류: ${errorDetail}</p>
+                        `);
+                    },
+                    complete: function() {
+                        $('#upload-button').prop('disabled', false).text('분석 시작하기');
                     }
                 });
             });
@@ -198,6 +332,3 @@
     </script>
 </body>
 </html>
-
-
-
