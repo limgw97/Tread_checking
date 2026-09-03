@@ -9,7 +9,8 @@ import traceback
 import os
 from fastapi.templating import Jinja2Templates
 
-API_BASE_URL = os.getenv("API_BASE_URL", "http://127.0.0.1:8000")  # 기본값 설정
+# 기본값 설정 / デフォルト値の設定 / default value
+API_BASE_URL = os.getenv("API_BASE_URL", "http://127.0.0.1:8000")
 
 app = FastAPI()
 
@@ -18,7 +19,7 @@ app = FastAPI()
 # Allow CORS from all origins for testing; restrict in production as needed
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # 또는 ["http://127.0.0.1"]으로 설정 가능
+    allow_origins=["*"],  # 또는 ["http://127.0.0.1"]으로 설정 가능 / または["http://127.0.0.1"]に設定可能 / or set to ["http://127.0.0.1"]
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -45,6 +46,8 @@ def crop_tread(image):
 templates = Jinja2Templates(directory="templates")
 
 # 현재 파일의 경로를 기준으로 templates 폴더의 경로를 가져옵니다.
+# 現在のファイルのパスを基準にtemplatesフォルダのパスを取得します。
+# Resolve the templates folder path relative to this file's location.
 current_dir = os.path.dirname(os.path.abspath(__file__))
 templates_dir = os.path.join(current_dir, "templates")
 
@@ -53,14 +56,16 @@ async def root(request: Request):
     user_agent = request.headers.get('user-agent', '')
     try:
         # 모바일 기기 여부 확인
+        # モバイル端末かどうかを確認
+        # Check whether the request is from a mobile device
         if "Mobi" in user_agent or "Android" in user_agent:
-            # 모바일용 HTML 파일 반환
+            # 모바일용 HTML 파일 반환 / モバイル用HTMLファイルを返す / return the mobile HTML file
             file_path = os.path.join(templates_dir, "mobile.html")
         else:
-            # 데스크톱용 HTML 파일 반환
+            # 데스크톱용 HTML 파일 반환 / デスクトップ用HTMLファイルを返す / return the desktop HTML file
             file_path = os.path.join(templates_dir, "example.html")
         
-        # 파일 읽기
+        # 파일 읽기 / ファイル読み込み / read the file
         with open(file_path, "r", encoding="utf-8") as file:
             content = file.read()
 
@@ -96,3 +101,4 @@ async def predict_image(file: UploadFile = File(...)):
         error_message = f"An error occurred: {e}. Trace: {traceback.format_exc()}"
         print(error_message)
         raise HTTPException(status_code=500, detail=error_message)
+

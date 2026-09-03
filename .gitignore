@@ -1,0 +1,16 @@
+# Secrets — never commit the real .env
+.env
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Generated at runtime
+example_image_qr.png
+

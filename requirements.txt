@@ -5,5 +5,7 @@ pillow                   # 이미지 처리를 위한 PIL (Pillow)
 numpy                    # 이미지 배열 및 데이터 처리를 위한 NumPy
 sqlalchemy               # SQLAlchemy ORM
 asyncpg                  # 비동기 PostgreSQL 드라이버
+python-dotenv             # .env 파일에서 환경변수(DB 접속정보 등) 로드
 python-multipart
 jinja2
+
